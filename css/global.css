@@ -1,9 +1,70 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900italic,900);
+@import url(https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap);
+
 body {
     margin: 0;
+    font-family: 'Montserrat', sans-serif;
 }
 .navbar {
     display: flex;
     height: 10vh;
-    width: 100%;
-    background-color: aqua;
+    margin: 0;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 1.6em;
+    background-color: #046A38;
 }
+.navbar a {
+    text-decoration: none;
+    color: black;
+}
+.navbtn {
+    padding-right: 20px;
+}
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.header {
+    margin: 3% 0 10px 0;
+    font-size: 1.2em;
+}
+.search-cont {
+    display: flex;
+    gap: 10px;
+}
+.search {
+  	font-size: 18px;
+  	border-radius: 10px;
+  	width: 20vw;
+  	height: 5vh;
+  	border: none;
+  	background-color: transparent;
+  	padding-left: 10px;
+  	outline: 1px solid;
+    outline-color: gray;
+}
+.search::-webkit-input-placeholder {
+    font-weight: lighter;
+    color:#AFB2B3;
+}
+.search::-moz-placeholder {
+    font-weight: lighter;
+    color:#AFB2B3;
+}
+.search::-ms-input-placeholder {
+    font-weight: lighter;
+    color:#AFB2B3;
+}
+.go-btn {
+    font-weight: bolder;
+    font-size: 0.8vw;
+    background-color: #00A859;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 20%;
+    display: block;
+    border-radius: 20px;
+  }
