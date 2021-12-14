@@ -45,21 +45,21 @@ body {
   	outline: 1px solid;
     outline-color: gray;
 }
-.search::-webkit-input-placeholder {
+.search::-webkit-input-placeholder, .login::-webkit-input-placeholder {
     font-weight: lighter;
     color:#AFB2B3;
 }
-.search::-moz-placeholder {
+.search::-moz-placeholder, .login::-webkit-input-placeholder  {
     font-weight: lighter;
     color:#AFB2B3;
 }
-.search::-ms-input-placeholder {
+.search::-ms-input-placeholder, .login::-webkit-input-placeholder  {
     font-weight: lighter;
     color:#AFB2B3;
 }
 .go-btn {
     font-weight: bolder;
-    font-size: 0.8vw;
+    font-size: 20px;
     background-color: #00A859;
     color: white;
     border: none;
@@ -67,4 +67,50 @@ body {
     width: 20%;
     display: block;
     border-radius: 20px;
+}
+.go-btn:hover, .login-btn:hover {
+    background-color: #008547;
   }
+.login-content {
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.login-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 500px;
+    width: 700px;
+    background-color: #AFB2B3;
+}
+.login-title {
+    font-size: 50px;
+    margin: 0 0 20px 0;
+}
+.login {
+    font-size: 18px;
+    border-radius: 10px;
+    width: 400px;
+    height: 50px;
+    border: none;
+    background-color: white;
+    padding-left: 10px;
+    margin-bottom: 15px;
+    outline: 1px solid;
+    outline-color: gray;
+}
+.login-btn {
+    font-weight: bolder;
+    font-size: 18px;
+    background-color: #00A859;
+    color: white;
+    border: none;
+    cursor: pointer;
+    height: 40px;
+    width: 150px;
+    display: block;
+    border-radius: 20px;
+}
