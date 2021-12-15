@@ -1,0 +1,15 @@
+{% include "header.html" %} 
+<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/global.css') }}">
+{%block body%}
+    <main class="login-content">
+        <div class="login-box">
+            <p class="login-title">Lendy</p>
+            <input type="text" id="username" class="login" placeholder="Username">
+            <input type="text" id="password" class="login" placeholder="Password">
+            <button type="submit" class="login-btn">Login</button>
+        </div>
+    </main>
+</body>
+</html>
+
+{% endblock %}
