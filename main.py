@@ -1,5 +1,4 @@
-from flask import Flask,render_template, request, redirect
-from flask.helpers import url_for
+from flask import Flask,render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
