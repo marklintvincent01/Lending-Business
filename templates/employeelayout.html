@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/employeeviews.css') }}">
+    <title>Lendy</title>
+</head>
+<body>
+    <div class="grid-container">
+        <div class="top-nav">
+            <p class="logo">Lendy</p>
+        </div>
+
+        <div class="nav-grid">
+            {% block nav_items %} {% endblock nav_items %}
+        </div>
+
+        <div class="content-grid">
+            {% block content %} {% endblock content %}
+        </div>
+    </div>
+
+
+</body>
+</html>

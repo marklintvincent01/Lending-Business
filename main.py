@@ -1,19 +1,32 @@
 from flask import Flask,render_template, request, redirect, url_for
+from forms import RegistrationForm, LoginForm
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'f9773dc56c46b09f651bfdfad603adc8'
 
 @app.route('/')
 @app.route('/home')
 def landingpage():
-    return render_template("landingpage.html")
+    return render_template('landingpage.html')
 
 @app.route('/about')
 def aboutpage():
-    return render_template("about.html")
+    return render_template('about.html')
+
+@app.route('/registration')
+def register():
+    form = RegistrationForm()
+    return render_template('registration.html', title='Register', form=form)
 
 @app.route('/login')
 def loginpage():
-    return render_template("loginpage.html")
+    form = LoginForm()
+    return render_template('loginpage.html', title='Login', form=form)
 
-if __name__ == "__main__":
+@app.route('/employees')
+def employeepage():
+    return render_template('employees.html')
+
+
+if __name__ == '__main__':
     app.run(debug = True)
