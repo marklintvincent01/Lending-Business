@@ -8,5 +8,129 @@
     </div>
 {% endblock nav_items %}
 {% block content %}
-    
+    <div id="edit-profile-modal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-card">
+
+            <!-- Modal header -->
+            <div class="modal-header">
+                <h4>Edit Profile</h4>
+            </div>
+            
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form id='updateProfile' action="{{ url_for('userprofile.editProfile') }}" method="POST" enctype="multipart/form-data">
+                    {{ update_form.hidden_tag() }}
+                    <div class="modal-content-divider">
+                        <h4>Personal Information</h4>
+
+                        <!-- First name, avatar forms -->
+                        <div class="form-group-row">
+                            <div class="form-group-s">
+                                {{ update_form.firstname.label() }}
+                                {{ update_form.firstname(value=info.firstname) }}
+                            </div>
+                            <div class="form-group-s">
+                                {{ update_form.avatar.label() }}
+                                {{ update_form.avatar(accept="image/jpeg, image/png") }}
+                            </div>
+                        </div>
+
+                        <!-- Middle name, last name forms -->
+                        <div class="form-group-row">
+                            <div class="form-group-s">
+                                {{ update_form.middlename.label() }}
+                                {{ update_form.middlename(value=info.middlename) }}
+                            </div>
+                            <div class="form-group-s">
+                                {{ update_form.lastname.label() }}
+                                {{ update_form.lastname(value=info.lastname) }}
+                            </div>
+                        </div>
+
+                        <!-- DOB and gender forms -->
+                        <div class="form-group-row">
+                            <div class="form-group-s">
+                                {{ update_form.dateofbirth.label() }}
+                                {{ update_form.dateofbirth(value=info.birthdate) }}
+                            </div>
+                            <div class="form-group-s">
+                                {{ update_form.gender.label() }}
+                                {{ update_form.gender(value=info.gender) }}
+                            </div>
+                        </div>
+
+                        <!-- Address form -->
+                        <div class="form-group">
+                            {{ update_form.address.label() }}
+                            {{ update_form.address(value=info.address) }}
+                        </div>
+
+                        <!-- Civil stat, nationality, contact num forms -->
+                        <div class="form-group-row">
+                            <div class="form-group-xs">
+                                {{ update_form.civilstatus.label() }}
+                                {{ update_form.civilstatus(value=info.civil_status) }}
+                            </div>
+                            <div class="form-group-xs">
+                                {{ update_form.nationality.label() }}
+                                {{ update_form.nationality(value=info.nationality) }}
+                            </div>
+                            <div class="form-group-xs">
+                                {{ update_form.contactnumber.label() }}
+                                {{ update_form.contactnumber(value=info.phone_number) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    <hr size="1" noshade style="color:rgba(0, 0, 0, 0.2)">
+                    <div class="modal-content-divider">
+                        <h4>Job Information</h4>
+
+                        <!-- Job title, company forms -->
+                        <div class="form-group-row">
+                            <div class="form-group-s">
+                                {{ update_form.jobtitle.label() }}
+                                {{ update_form.jobtitle(value=info.job_title) }}
+                            </div>
+                            <div class="form-group-s">
+                                {{ update_form.jobcompany.label() }}
+                                {{ update_form.jobcompany(value=info.job_company) }}
+                            </div>
+                        </div>
+
+                        <!-- Comp address form -->
+                        <div class="form-group">
+                            {{ update_form.companyaddress.label() }}
+                            {{ update_form.companyaddress(value=info.company_address) }}
+                        </div>
+
+                        <!-- Employment yr, annual salary forms -->
+                        <div class="form-group-row">
+                            <div class="form-group-s">
+                                {{ update_form.employmentyear.label() }}
+                                {{ update_form.employmentyear(value=info.employment_yr) }}
+                            </div>
+                            <div class="form-group-s">
+                                {{ update_form.annualsalary.label() }}
+                                <div class="input-group">
+                                    <label for="annualsalary" class="fixed-left">PHP</label>
+                                    {{ update_form.annualsalary(class="fixed-right", value=info.annual_salary) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <!-- Modal action buttons -->
+                <button type="reset" id="close-modal" class="btn btn-secondary" form="updateProfile">Cancel</button>
+                {{ update_form.submitform(form="updateProfile", class="btn btn-primary") }}
+            </div>
+        </div>
+    </div> 
 {% endblock content %}
