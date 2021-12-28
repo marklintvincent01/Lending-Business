@@ -3,11 +3,31 @@
     <div onclick="location.href='employees';" class="nav-item" style="background-color: #263d47;">
         <a href="employees" class="nav-title">Employees</a>
     </div>
-    <div onclick="location.href='registration';" class="nav-item">
+    <!-- <div onclick="location.href='registration';" class="nav-item">
         <a href="registration" class="nav-title">Register</a>
-    </div>
+    </div> -->
 {% endblock nav_items %}
 {% block content %}
+    <header class="content-header">
+        <div class="add-profile-btn" id="edit-profile-btn">
+            <a class="btn-light">Add Employee</a>
+        </div>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, messages in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <main>
+        
+    </main>
+
     <div id="edit-profile-modal" class="modal">
 
         <!-- Modal content -->
@@ -15,71 +35,67 @@
 
             <!-- Modal header -->
             <div class="modal-header">
-                <h4>Edit Profile</h4>
+                <p>Add Employee</p>
             </div>
             
             <!-- Modal body -->
             <div class="modal-body">
-                <form id='updateProfile' action="{{ url_for('userprofile.editProfile') }}" method="POST" enctype="multipart/form-data">
-                    {{ update_form.hidden_tag() }}
+                <form id='' action="" method="POST" enctype="multipart/form-data">
+                    {{ register_form.hidden_tag() }}
                     <div class="modal-content-divider">
-                        <h4>Personal Information</h4>
+                        <h4>Employee Information</h4>
 
                         <!-- First name, avatar forms -->
                         <div class="form-group-row">
                             <div class="form-group-s">
-                                {{ update_form.firstname.label() }}
-                                {{ update_form.firstname(value=info.firstname) }}
+                                {{ register_form.Fname.label() }}
+                                {{ register_form.Fname() }}
                             </div>
                             <div class="form-group-s">
-                                {{ update_form.avatar.label() }}
-                                {{ update_form.avatar(accept="image/jpeg, image/png") }}
+                                {{ register_form.validID.label() }}
+                                {{ register_form.validID(accept="image/jpeg, image/png") }}
                             </div>
                         </div>
 
                         <!-- Middle name, last name forms -->
                         <div class="form-group-row">
                             <div class="form-group-s">
-                                {{ update_form.middlename.label() }}
-                                {{ update_form.middlename(value=info.middlename) }}
+                                {{ register_form.Mname.label() }}
+                                {{ register_form.Mname() }}
                             </div>
                             <div class="form-group-s">
-                                {{ update_form.lastname.label() }}
-                                {{ update_form.lastname(value=info.lastname) }}
+                                {{ register_form.Lname.label() }}
+                                {{ register_form.Lname() }}
                             </div>
                         </div>
 
                         <!-- DOB and gender forms -->
                         <div class="form-group-row">
                             <div class="form-group-s">
-                                {{ update_form.dateofbirth.label() }}
-                                {{ update_form.dateofbirth(value=info.birthdate) }}
+                                {{ register_form.dateofbirth.label() }}
+                                {{ register_form.dateofbirth() }}
                             </div>
                             <div class="form-group-s">
-                                {{ update_form.gender.label() }}
-                                {{ update_form.gender(value=info.gender) }}
+                                {{ register_form.gender.label() }}
+                                {{ register_form.gender() }}
                             </div>
                         </div>
 
                         <!-- Address form -->
                         <div class="form-group">
-                            {{ update_form.address.label() }}
-                            {{ update_form.address(value=info.address) }}
+                            {{ register_form.address.label() }}
+                            {{ register_form.address() }}
                         </div>
 
                         <!-- Civil stat, nationality, contact num forms -->
                         <div class="form-group-row">
-                            <div class="form-group-xs">
-                                {{ update_form.civilstatus.label() }}
-                                {{ update_form.civilstatus(value=info.civil_status) }}
+                            <div class="form-group-s">
+                                {{ register_form.email.label() }}
+                                {{ register_form.email() }}
                             </div>
-                            <div class="form-group-xs">
-                                {{ update_form.nationality.label() }}
-                                {{ update_form.nationality(value=info.nationality) }}
-                            </div>
-                            <div class="form-group-xs">
-                                {{ update_form.contactnumber.label() }}
-                                {{ update_form.contactnumber(value=info.phone_number) }}
+                            <div class="form-group-s">
+                                {{ register_form.contact_num.label() }}
+                                {{ register_form.contact_num() }}
                             </div>
                         </div>
                     </div>
@@ -87,39 +103,24 @@
                     
                     <hr size="1" noshade style="color:rgba(0, 0, 0, 0.2)">
                     <div class="modal-content-divider">
-                        <h4>Job Information</h4>
+                        <h4>Employee Account Username and Password</h4>
 
                         <!-- Job title, company forms -->
-                        <div class="form-group-row">
-                            <div class="form-group-s">
-                                {{ update_form.jobtitle.label() }}
-                                {{ update_form.jobtitle(value=info.job_title) }}
-                            </div>
-                            <div class="form-group-s">
-                                {{ update_form.jobcompany.label() }}
-                                {{ update_form.jobcompany(value=info.job_company) }}
-                            </div>
+                        <div class="form-group">
+                            {{ register_form.username.label() }}
+                            {{ register_form.username() }}
                         </div>
 
                         <!-- Comp address form -->
                         <div class="form-group">
-                            {{ update_form.companyaddress.label() }}
-                            {{ update_form.companyaddress(value=info.company_address) }}
+                            {{ register_form.password.label() }}
+                            {{ register_form.password() }}
                         </div>
 
                         <!-- Employment yr, annual salary forms -->
-                        <div class="form-group-row">
-                            <div class="form-group-s">
-                                {{ update_form.employmentyear.label() }}
-                                {{ update_form.employmentyear(value=info.employment_yr) }}
-                            </div>
-                            <div class="form-group-s">
-                                {{ update_form.annualsalary.label() }}
-                                <div class="input-group">
-                                    <label for="annualsalary" class="fixed-left">PHP</label>
-                                    {{ update_form.annualsalary(class="fixed-right", value=info.annual_salary) }}
-                                </div>
-                            </div>
+                        <div class="form-group">
+                            {{ register_form.confirm_password.label() }}
+                            {{ register_form.confirm_password() }}
                         </div>
                     </div>
                 </form>
@@ -128,9 +129,10 @@
             <!-- Modal footer -->
             <div class="modal-footer">
                 <!-- Modal action buttons -->
-                <button type="reset" id="close-modal" class="btn btn-secondary" form="updateProfile">Cancel</button>
-                {{ update_form.submitform(form="updateProfile", class="btn btn-primary") }}
+                <button type="reset" id="close-modal" class="btn-secondary" form="">Cancel</button>
+                {{ register_form.submit(class="btn-primary") }}
             </div>
         </div>
-    </div> 
+    </div>
+
 {% endblock content %}

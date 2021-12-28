@@ -1,4 +1,5 @@
-from flask import Flask,render_template, request, redirect, url_for, flash
+import os
+from flask import Flask, render_template, request, redirect, url_for, flash
 from forms import RegistrationForm, LoginForm
 
 app = Flask(__name__)
@@ -13,22 +14,23 @@ def landingpage():
 def aboutpage():
     return render_template('about.html')
 
-@app.route('/registration', methods=['GET', 'POST'])
+#, methods=['GET', 'POST']
+@app.route('/employees', methods=['GET', 'POST'])
 def register():
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        flash(f'Account created for {form.username.data}!')
-        
-    return render_template('registration.html', title='Register', form=form)
+    register_form = RegistrationForm()
+    if register_form.validate_on_submit():
+        flash(f'Account created for {register_form.username.data}!', 'success')
+         
+    return render_template('employees.html', register_form=register_form)
 
 @app.route('/login')
 def loginpage():
     form = LoginForm()
     return render_template('loginpage.html', title='Login', form=form)
 
-@app.route('/employees')
-def employeepage():
-    return render_template('employees.html')
+#@app.route('/employees')
+#def employeepage():
+#    return render_template('employees.html')
 
 
 if __name__ == '__main__':
