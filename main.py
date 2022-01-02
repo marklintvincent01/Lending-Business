@@ -20,6 +20,7 @@ def register():
     register_form = RegistrationForm()
     if register_form.validate_on_submit():
         flash(f'Account created for {register_form.username.data}!', 'success')
+        return redirect(url_for('register'))
          
     return render_template('employees.html', register_form=register_form)
 

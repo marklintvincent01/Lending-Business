@@ -8,27 +8,29 @@
     </div> -->
 {% endblock nav_items %}
 {% block content %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
     <header class="content-header">
-        <div class="add-profile-btn" id="edit-profile-btn">
+        <p class="employee-title">Employees</p>
+        <div class="add-profile-btn" id="add-profile-btn">
             <a class="btn-light">Add Employee</a>
-        </div>
+        </div> 
     </header>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, messages in messages %}
-                <div class="alert alert-{{ category }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-
     <main>
-        
+        <p>asdasd</p>
+        <p>asdasd</p>
+        <p>asdasd</p>
     </main>
 
-    <div id="edit-profile-modal" class="modal">
+    <div id="add-profile-modal" class="modal">
 
         <!-- Modal content -->
         <div class="modal-card">
@@ -40,7 +42,7 @@
             
             <!-- Modal body -->
             <div class="modal-body">
-                <form id='' action="" method="POST" enctype="multipart/form-data">
+                <form id='registerEmployee' action="" method="POST" enctype="multipart/form-data">
                     {{ register_form.hidden_tag() }}
                     <div class="modal-content-divider">
                         <h4>Employee Information</h4>
@@ -115,12 +117,33 @@
                         <div class="form-group">
                             {{ register_form.password.label() }}
                             {{ register_form.password() }}
+                            <!-- {% if register_form.password.errors %}
+                                {{ register_form.password(class="is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in register_form.password.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ register_form.password() }}
+                            {% endif %} -->
                         </div>
 
                         <!-- Employment yr, annual salary forms -->
                         <div class="form-group">
                             {{ register_form.confirm_password.label() }}
                             {{ register_form.confirm_password() }}
+                            <p id="error-text" class="invalid-feedback">Password not the same.</p>
+                            <!-- {% if register_form.confirm_password.errors %}
+                                {{ register_form.confirm_password(class="is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in register_form.confirm_password.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ register_form.confirm_password() }}
+                            {% endif %} -->
                         </div>
                     </div>
                 </form>
@@ -130,7 +153,7 @@
             <div class="modal-footer">
                 <!-- Modal action buttons -->
                 <button type="reset" id="close-modal" class="btn-secondary" form="">Cancel</button>
-                {{ register_form.submit(class="btn-primary") }}
+                {{ register_form.submit(form="registerEmployee", class="btn-primary") }}
             </div>
         </div>
     </div>
