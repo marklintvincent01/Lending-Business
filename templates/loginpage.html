@@ -2,12 +2,24 @@
 
 {%block body%}
     <main class="login-content">
-        <div class="login-box">
+        <form class="login-box" action="" method="POST">
+            {{ login_form.hidden_tag() }}
             <p class="login-title">Lendy</p>
-            <input type="text" id="username" class="login" placeholder="Username">
-            <input type="text" id="password" class="login" placeholder="Password">
-            <button type="submit" class="login-btn">Login</button>
-        </div>
+            <!-- <input type="text" id="username" class="login" placeholder="Username"> -->
+            {{ login_form.Lusername(class="login", placeholder="Username") }}
+            <!-- <input type="text" id="password" class="login" placeholder="Password"> -->
+            {{ login_form.Lpassword(class="login", placeholder="Password") }}
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="invalid-feedback">
+                    {{ message }}
+                </div>
+            {% endif %}
+            {% endwith %}
+            <!-- <button type="submit" class="login-btn">Login</button> -->
+            {{ login_form.Lsubmit(class="login-btn") }}
+
+        </form>
     </main>
 
 {% endblock %}

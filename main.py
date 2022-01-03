@@ -24,10 +24,16 @@ def register():
          
     return render_template('employees.html', register_form=register_form)
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def loginpage():
-    form = LoginForm()
-    return render_template('loginpage.html', title='Login', form=form)
+    login_form = LoginForm()
+    if login_form.validate_on_submit():
+        if login_form.Lusername.data == 'Tamotsu' and login_form.Lpassword.data == 'amongus132':
+            return redirect(url_for('register'))
+        else:
+            flash('Login unsuccessful. Please check username and password')
+
+    return render_template('loginpage.html', title='Login', login_form=login_form)
 
 #@app.route('/employees')
 #def employeepage():
