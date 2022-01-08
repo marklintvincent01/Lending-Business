@@ -220,7 +220,12 @@ top nav #1a4649
     flex-wrap: wrap;
     width: 48%;
 }
-
+.form-group-xs {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    width: 31%;
+}
 
 .input-group {
     display: flex;

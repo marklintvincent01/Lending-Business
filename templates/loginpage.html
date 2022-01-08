@@ -11,9 +11,11 @@
             {{ login_form.Lpassword(class="login", placeholder="Password") }}
             {% with messages = get_flashed_messages() %}
             {% if messages %}
-                <div class="invalid-feedback">
-                    {{ message }}
-                </div>
+                {% for message in messages %}
+                    <div class="invalid-feedback">
+                        {{ message }}
+                    </div>
+                {% endfor %}
             {% endif %}
             {% endwith %}
             <!-- <button type="submit" class="login-btn">Login</button> -->

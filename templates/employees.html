@@ -19,6 +19,7 @@
         <p>asdasd</p>
         <p>asdasd</p>
         <p>asdasd</p>
+        <a href="{{ url_for('logout') }}">amongus</a>
     </main>
 
     <div id="add-profile-modal" class="modal">
@@ -45,8 +46,8 @@
                                 {{ register_form.Fname() }}
                             </div>
                             <div class="form-group-s">
-                                {{ register_form.validID.label() }}
-                                {{ register_form.validID(accept="image/jpeg, image/png") }}
+                                {{ register_form.age.label() }}
+                                {{ register_form.age() }}
                             </div>
                         </div>
 
@@ -102,6 +103,7 @@
                         <div class="form-group">
                             {{ register_form.username.label() }}
                             {{ register_form.username() }}
+                            <div id="msg">{{ msg }}</div>
                         </div>
 
                         <!-- Comp address form -->
