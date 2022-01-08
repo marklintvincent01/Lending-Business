@@ -85,6 +85,7 @@ body {
     align-items: center;
     height: 500px;
     width: 700px;
+    border-radius: 10px;
     background-color: #AFB2B3;
 }
 .login-title {

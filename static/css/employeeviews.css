@@ -270,6 +270,19 @@ input {
     box-sizing: border-box;
     height: 45px;
 }
+select {
+    /* font-family: var(--primary-typeface); */
+    font-size: 1rem;
+    font-weight: 500;
+    text-rendering: optimizeLegibility;
+    color: #2B2B2B;
+    padding: 5px 5px;
+    margin: 5px 0;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    box-sizing: border-box;
+    height: 45px;
+}
 
 input[type="text"] {
     width: 100%;
