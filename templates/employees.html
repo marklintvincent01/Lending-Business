@@ -9,17 +9,55 @@
 {% endblock nav_items %}
 {% block content %}
     <header class="content-header">
-        <p class="employee-title">Employees</p>
-        <div class="add-profile-btn" id="add-profile-btn">
-            <a class="btn-light">Add Employee</a>
-        </div> 
+        <div class="alert-container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            <p>{{ message }}</p>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        <div class="page-title">
+            <p class="employee-title">Employees</p>
+            <div class="add-profile-btn" id="add-profile-btn">
+                <a class="btn-light">Add Employee</a>
+            </div>
+        </div>
+        <div class="table-titles">
+            <table class="data-title">
+                <tr>
+                    <th class="ID">ID</th>
+                    <th class="name">Name</th>
+                    <th class="role">Role</th>
+                    <th class="username">Username</th>
+                    <th class="contact">Contact No.</th>
+                    <th class="actions">Actions</th>
+                </tr>
+            </table>
+        </div>
     </header>
 
-    <main>
-        <p>asdasd</p>
-        <p>asdasd</p>
-        <p>asdasd</p>
-        <a href="{{ url_for('logout') }}">amongus</a>
+    <main class="content-main">
+        <table class="data-table">
+            {% for item in data %}
+            <tr>
+                <td class="ID">{{item.lenderID}}</td>
+                <td class="name">{{item.name}}</td>
+                <td class="role">{{item.role_name}}</td>
+                <td class="username">{{item.username}}</td>
+                <td class="contact">{{item.contact_num}}</td>
+                <td class="actions">
+                    <div class="action">
+                        <button id="update-btn">Update</button>
+						<button id="delete-btn">Delete</button>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+          </table>
     </main>
 
     <div id="add-profile-modal" class="modal">
@@ -34,7 +72,7 @@
             
             <!-- Modal body -->
             <div class="modal-body">
-                <form id='registerEmployee' action="" method="POST" enctype="multipart/form-data">
+                <form id='registerEmployee' action="" method="POST" enctype="multipart/form-data" onsubmit="submit.disabled = true; return true;">
                     {{ register_form.hidden_tag() }}
                     <div class="modal-content-divider">
                         <h4>Employee Information</h4>
@@ -107,7 +145,24 @@
                         <div class="form-group">
                             {{ register_form.username.label() }}
                             {{ register_form.username() }}
-                            <div id="msg">{{ msg }}</div>
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <div id="alert-mess" class="alert alert-{{ category }}">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                            {% endwith %}
+                            <!-- {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div class="invalid-feedback">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                            {% endwith %} -->
                         </div>
 
                         <!-- Comp address form -->
