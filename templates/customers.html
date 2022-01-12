@@ -1,0 +1,203 @@
+{% extends "employeelayout.html" %}
+{% block nav_items %}
+    <div onclick="location.href='customers';" class="nav-item" style="background-color: #263d47;">
+        <a href="customers" class="nav-title">Customers</a>
+    </div>
+    <div onclick="location.href='registration';" class="nav-item">
+        <a href="registration" class="nav-title">Collect</a>
+    </div>
+{% endblock nav_items %}
+{% block content %}
+    <header class="content-header">
+        <div class="alert-container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            <p>{{ message }}</p>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        <div class="page-title">
+            <p class="employee-title">Customers</p>
+            <div class="add-profile-btn" id="add-profile-btn">
+                <a class="btn-light">Add Customer</a>
+            </div>
+        </div>
+        <div class="table-titles">
+            <table class="data-title">
+                <tr>
+                    <th class="cus-name">Name</th>
+                    <th class="amount">Amount</th>
+                    <th class="cus-contact">Contact No.</th>
+                    <th class="contract">Contract</th>
+                    <th class="actions">Actions</th>
+                </tr>
+            </table>
+        </div>
+    </header>
+
+    <main class="content-main">
+        <table class="data-table">
+            {% for item in data %}
+            <tr>
+                <td class="cus-name">{{item.c_name}}</td>
+                <td class="amount">₱{{item.loan_amount}}</td>
+                <td class="cus-contact">{{item.contact_num}}</td>
+                <td class="contract">{{item.c_name}}</td>
+                <td class="actions">
+                    <div class="action">
+                        <button id="update-btn" class="update-btn-s">Update</button>
+                        <button id="delete-btn" class="delete-btn-s">Delete</button>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </main>
+
+    <div id="add-profile-modal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-card">
+
+            <!-- Modal header -->
+            <div class="modal-header">
+                <p>Add Customer</p>
+            </div>
+            
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form id='registerCustomer' action="" method="POST" enctype="multipart/form-data">
+                    {{ cus_form.hidden_tag() }}
+                    <div class="modal-content-divider">
+                        <h4>Customer Information</h4>
+
+                        <!-- First name, avatar forms -->
+                        <div class="form-group-row">
+                            <div class="form-group-s">
+                                {{ cus_form.Fname.label() }}
+                                {{ cus_form.Fname() }}
+                            </div>
+                            <div class="form-group-s">
+                                {{ cus_form.Mname.label() }}
+                                {{ cus_form.Mname() }}
+                            </div>
+                        </div>
+
+                        <!-- Middle name, last name forms -->
+                        <div class="form-group-row">
+                            <div class="form-group-s">
+                                {{ cus_form.Lname.label() }}
+                                {{ cus_form.Lname() }}
+                            </div>
+                            <div class="form-group-s">
+                                {{ cus_form.email.label() }}
+                                {{ cus_form.email() }}
+                            </div>
+                        </div>
+
+                        <!-- Address form -->
+                        <div class="form-group">
+                            {{ cus_form.address.label() }}
+                            {{ cus_form.address() }}
+                        </div>
+
+                        <!-- DOB and gender forms -->
+                        <div class="form-group-row">
+                            <div class="form-group-xs">
+                                {{ cus_form.dateofbirth.label() }}
+                                {{ cus_form.dateofbirth() }}
+                            </div>
+                            <div class="form-group-xs input">
+                                {{ cus_form.gender.label() }}
+                                {{ cus_form.gender() }}
+                            </div>
+                            <div class="form-group-xs">
+                                {{ cus_form.contact_num.label() }}
+                                {{ cus_form.contact_num() }}
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    <hr size="1" noshade style="color:rgba(0, 0, 0, 0.2)">
+                    <div class="modal-content-divider">
+                        <h4>Comaker Information</h4>
+
+                        <!-- Job title, company forms -->
+                        <div class="form-group-row">
+                            <div class="form-group-s">
+                                {{ cus_form.c_Fname.label() }}
+                                {{ cus_form.c_Fname() }}
+                            </div>
+                            <div class="form-group-s">
+                                {{ cus_form.c_Mname.label() }}
+                                {{ cus_form.c_Mname() }}
+                            </div>
+                        </div>
+
+                        <div class="form-group-row">
+                            <div class="form-group-s">
+                                {{ cus_form.c_Lname.label() }}
+                                {{ cus_form.c_Lname() }}
+                            </div>
+                            <div class="form-group-s">
+                                {{ cus_form.c_contact_num.label() }}
+                                {{ cus_form.c_contact_num() }}
+                            </div>
+                        </div>
+
+                        <!-- Comp address form -->
+                        <div class="form-group">
+                            {{ cus_form.c_address.label() }}
+                            {{ cus_form.c_address() }}
+                        </div>
+                    </div>
+
+                    <hr size="1" noshade style="color:rgba(0, 0, 0, 0.2)">
+                    <div class="modal-content-divider">
+                        <h4>Loan Details</h4>
+
+                        <!-- Job title, company forms -->
+                        <div class="form-group-row">
+                            <div class="form-group-s">
+                                {{ cus_form.amount.label() }}
+                                <div class="input-group">
+                                    <label for="annualsalary" class="fixed-left">₱</label>
+                                    {{ cus_form.amount(class="fixed-right neg-pad") }}
+                                </div>
+                            </div>
+                            <div class="form-group-s">
+                                {{ cus_form.contract.label() }}
+                                {{ cus_form.contract() }}
+                            </div>
+                        </div>
+
+                        <div class="form-group-row">
+                            <div class="form-group-s">
+                                {{ cus_form.mode.label() }}
+                                {{ cus_form.mode() }}
+                            </div>
+                            <div class="form-group-s">
+                                {{ cus_form.rate.label() }}
+                                {{ cus_form.rate() }}
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <!-- Modal action buttons -->
+                <button type="reset" id="close-modal" class="btn-secondary" form="">Cancel</button>
+                {{ cus_form.submit(form="registerCustomer", class="btn-primary") }}
+            </div>
+        </div>
+    </div>    
+
+    
+{% endblock content %}

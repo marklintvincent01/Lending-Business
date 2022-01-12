@@ -86,6 +86,30 @@ reg_btn.onclick = function() {
 //     }
 // });
 
+// function updateTextView(_obj){
+//     var num = getNumber(_obj.val());
+//     if(num==0){
+//         _obj.val('');
+//     }else{
+//         _obj.val(num.toLocaleString());
+//     }
+// }
+// function getNumber(_str){
+//     var arr = _str.split('');
+//     var out = new Array();
+//     for(var cnt=0;cnt<arr.length;cnt++){
+//         if(isNaN(arr[cnt])==false){
+//         out.push(arr[cnt]);
+//         }
+//     }
+//     return Number(out.join(''));
+// }
+// $(document).ready(function(){
+//     $('#amount').on('keyup',function(){
+//         updateTextView($(this));
+//     });
+// });
+
 $(function() {
     setTimeout(function() { $(".alert").fadeOut(1500); }, 5000)
 })
