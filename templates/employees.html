@@ -1,7 +1,7 @@
 {% extends "employeelayout.html" %}
 {% block nav_items %}
-    <div onclick="location.href='employees';" class="nav-item" style="background-color: #263d47;">
-        <a href="employees" class="nav-title">Employees</a>
+    <div onclick="location.href='/employees';" class="nav-item" style="background-color: #263d47;">
+        <a href="/employees" class="nav-title">Employees</a>
     </div>
     <!-- <div onclick="location.href='registration';" class="nav-item">
         <a href="registration" class="nav-title">Register</a>
@@ -51,13 +51,13 @@
                 <td class="contact">{{item.contact_num}}</td>
                 <td class="actions">
                     <div class="action">
-                        <button id="update-btn" class="update-btn-s">Update</button>
+                        <button id="update-btn" class="update-btn-s" onclick="location.href='/employees/{{item.lenderID}}';">Update</button>
 						<button id="delete-btn" class="delete-btn-s">Delete</button>
                     </div>
                 </td>
             </tr>
             {% endfor %}
-          </table>
+        </table>
     </main>
 
     <div id="add-profile-modal" class="modal">

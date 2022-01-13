@@ -2,6 +2,7 @@
 @import url(https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap);
 @import url(employees.css);
 @import url(customers.css);
+@import url(customer-details.css);
 
 body {
     margin: 0;
@@ -74,7 +75,7 @@ top nav #1a4649
 .content-grid {
     grid-area: content;
     display: grid;
-  	height: 90vh;
+  	height: 92vh;
   	margin: 0;
     justify-items: center;
   	grid-template-columns: 1fr;
@@ -444,7 +445,7 @@ input.fixed-right {
 
 .alert {
     /* position: fixed; */
-    /* padding: 0.75rem 1.25rem; */
+    padding: 0 0.75rem 0 1.25rem;
     /* margin: 0; */
     border: 1px solid transparent;
     border-radius: 0.25rem;
@@ -504,6 +505,14 @@ input.fixed-right {
     }
     .action {
         flex-direction: column;
+    }
+    /* .content-grid {
+        height: 90vh;
+    } */
+}
+@media(max-width: 1900px) {
+    .content-grid {
+        height: 90vh;
     }
 }
 /* @media(max-width: 1250px) {

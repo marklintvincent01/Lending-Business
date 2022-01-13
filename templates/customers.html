@@ -1,10 +1,10 @@
 {% extends "employeelayout.html" %}
 {% block nav_items %}
-    <div onclick="location.href='customers';" class="nav-item" style="background-color: #263d47;">
-        <a href="customers" class="nav-title">Customers</a>
+    <div onclick="location.href='/customers';" class="nav-item" style="background-color: #263d47;">
+        <a href="/customers" class="nav-title">Customers</a>
     </div>
-    <div onclick="location.href='registration';" class="nav-item">
-        <a href="registration" class="nav-title">Collect</a>
+    <div onclick="location.href='/collect';" class="nav-item">
+        <a href="/collect" class="nav-title">Collect</a>
     </div>
 {% endblock nav_items %}
 {% block content %}
@@ -49,7 +49,7 @@
                 <td class="contract">{{item.c_name}}</td>
                 <td class="actions">
                     <div class="action">
-                        <button id="update-btn" class="update-btn-s">Update</button>
+                        <button id="update-btn" class="update-btn-s" onclick="location.href='/customers/{{item.cusID}}';">Update</button>
                         <button id="delete-btn" class="delete-btn-s">Delete</button>
                     </div>
                 </td>

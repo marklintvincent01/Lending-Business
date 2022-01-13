@@ -1,0 +1,167 @@
+{% extends "employeelayout.html" %}
+{% block nav_items %}
+    <div onclick="location.href='/customers';" class="nav-item">
+        <a href="/customers" class="nav-title">Customers</a>
+    </div>
+    <div onclick="location.href='/collect';" class="nav-item">
+        <a href="/collect" class="nav-title">Collect</a>
+    </div>
+{% endblock nav_items %}
+{% block content %}
+    <header class="content-header">
+        <div class="alert-container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            <p>{{ message }}</p>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+    </header>
+
+    <main class="content-main">
+        <div class="box">
+
+            <!-- Modal content -->
+            <div class="box-card">
+
+                <!-- Modal header -->
+                <div class="modal-header">
+                    <p>Customer #{{cus_data.cusID}}</p>
+                </div>
+                
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <form id='updateCustomer' action="" method="POST" enctype="multipart/form-data">
+                        {{ cus_form.hidden_tag() }}
+                        <div class="modal-content-divider">
+                            <h4>Customer Information</h4>
+
+                            <!-- First name, avatar forms -->
+                            <div class="form-group-row">
+                                <div class="form-group-s">
+                                    {{ cus_form.Fname.label() }}
+                                    {{ cus_form.Fname(value=cus_data.Fname) }}
+                                </div>
+                                <div class="form-group-s">
+                                    {{ cus_form.Mname.label() }}
+                                    {{ cus_form.Mname(value=cus_data.Mname) }}
+                                </div>
+                            </div>
+
+                            <!-- Middle name, last name forms -->
+                            <div class="form-group-row">
+                                <div class="form-group-s">
+                                    {{ cus_form.Lname.label() }}
+                                    {{ cus_form.Lname(value=cus_data.Lname) }}
+                                </div>
+                                <div class="form-group-s">
+                                    {{ cus_form.email.label() }}
+                                    {{ cus_form.email(value=cus_data.email) }}
+                                </div>
+                            </div>
+
+                            <!-- Address form -->
+                            <div class="form-group">
+                                {{ cus_form.address.label() }}
+                                {{ cus_form.address(value=cus_data.address) }}
+                            </div>
+
+                            <!-- DOB and gender forms -->
+                            <div class="form-group-row">
+                                <div class="form-group-xs">
+                                    {{ cus_form.dateofbirth.label() }}
+                                    {{ cus_form.dateofbirth(value=cus_data.dob) }}
+                                </div>
+                                <div class="form-group-xs input">
+                                    {{ cus_form.gender.label() }}
+                                    {{ cus_form.gender(value=cus_data.gender) }}
+                                </div>
+                                <div class="form-group-xs">
+                                    {{ cus_form.contact_num.label() }}
+                                    {{ cus_form.contact_num(value=cus_data.contact_num) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                        <hr size="1" noshade style="color:rgba(0, 0, 0, 0.2)">
+                        <div class="modal-content-divider">
+                            <h4>Comaker Information</h4>
+
+                            <!-- Job title, company forms -->
+                            <div class="form-group-row">
+                                <div class="form-group-s">
+                                    {{ cus_form.c_Fname.label() }}
+                                    {{ cus_form.c_Fname(value=cus_data.c_Fname) }}
+                                </div>
+                                <div class="form-group-s">
+                                    {{ cus_form.c_Mname.label() }}
+                                    {{ cus_form.c_Mname(value=cus_data.c_Mname) }}
+                                </div>
+                            </div>
+
+                            <div class="form-group-row">
+                                <div class="form-group-s">
+                                    {{ cus_form.c_Lname.label() }}
+                                    {{ cus_form.c_Lname(value=cus_data.c_Lname) }}
+                                </div>
+                                <div class="form-group-s">
+                                    {{ cus_form.c_contact_num.label() }}
+                                    {{ cus_form.c_contact_num(value=cus_data.c_contact_num) }}
+                                </div>
+                            </div>
+
+                            <!-- Comp address form -->
+                            <div class="form-group">
+                                {{ cus_form.c_address.label() }}
+                                {{ cus_form.c_address(value=cus_data.c_address) }}
+                            </div>
+                        </div>
+
+                        <hr size="1" noshade style="color:rgba(0, 0, 0, 0.2)">
+                        <div class="modal-content-divider">
+                            <h4>Loan Details</h4>
+
+                            <!-- Job title, company forms -->
+                            <div class="form-group-row">
+                                <div class="form-group-s">
+                                    {{ cus_form.amount.label() }}
+                                    <div class="input-group">
+                                        <label for="annualsalary" class="fixed-left">₱</label>
+                                        {{ cus_form.amount(value=cus_data.loan_amount, class="fixed-right neg-pad") }}
+                                    </div>
+                                </div>
+                                <div class="form-group-s">
+                                    {{ cus_form.contract.label() }}
+                                    {{ cus_form.contract() }}
+                                </div>
+                            </div>
+
+                            <div class="form-group-row">
+                                <div class="form-group-s">
+                                    {{ cus_form.mode.label() }}
+                                    {{ cus_form.mode(value=cus_data.mode_ID) }}
+                                </div>
+                                <div class="form-group-s">
+                                    {{ cus_form.rate.label() }}
+                                    {{ cus_form.rate(value=cus_data.rateID) }}
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <!-- Modal action buttons -->
+                    <button type="reset" id="close-modal" class="cus-delete-btn" form="">Delete Customer</button>
+                    {{ cus_form.submit(form="updateCustomer", class="btn-primary") }}
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock content %}

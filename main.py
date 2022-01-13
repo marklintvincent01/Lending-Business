@@ -22,14 +22,26 @@ mysql = MySQL(app)
 def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
-        if not session.get('id'):
+        if not session.get('roleid'):
             return redirect(url_for('loginpage'))
-
-        if session.get('roleid') == 2:
-            return redirect(url_for('aboutpage'))
-
         return view(**kwargs)
     return wrapped_view
+
+def admin_check(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs): 
+        if session.get('roleid') != 1:
+            return redirect(url_for('customers'))
+        return view(**kwargs)
+    return wrapped_view
+
+def employee_check(view):
+    @functools.wraps(view)
+    def wrapped_view2(**kwargs): 
+        if session.get('roleid') != 2:
+            return redirect(url_for('register'))
+        return view(**kwargs)
+    return wrapped_view2
 
 @app.route('/')
 @app.route('/home')
@@ -63,13 +75,14 @@ def loginpage():
 
         if verify:
             session['loggedin'] = True
-            session['id'] = account['lenderID']
-            session['username'] = account['username']
-            session['roleid'] = user_role['role_id']
+            session['id'] = lender_id
+            session['username'] = username
+            session['roleid'] = roleid
+
             if roleid == 1:  
                 return redirect(url_for('register'))
             else:
-                return redirect(url_for('aboutpage'))
+                return redirect(url_for('customers'))
 
         else:
             flash("The password you entered is incorrect.")
@@ -78,8 +91,19 @@ def loginpage():
     else:  
         return render_template('loginpage.html', title='Login', login_form=login_form)
 
+@app.route('/logout')
+def logout():
+    # Remove session data, this will log the user out
+    session.pop('loggedin', None)
+    session.pop('id', None)
+    session.pop('username', None)
+    session.pop('roleid', None)
+    # Redirect to login page
+    return redirect(url_for('loginpage'))
+
 @app.route('/employees', methods=['GET', 'POST'])
 @login_required
+@admin_check
 def register():
     register_form = RegistrationForm()
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -143,17 +167,15 @@ def register():
     else:
         return render_template('employees.html', register_form=register_form, data=data)
 
+@app.route('/employees/<emp_id>')
+def employee_details(emp_id):
+    mess = emp_id
 
-@app.route('/logout')
-def logout():
-    # Remove session data, this will log the user out
-    session.pop('loggedin', None)
-    session.pop('id', None)
-    session.pop('username', None)
-    # Redirect to login page
-    return redirect(url_for('loginpage'))
+    return render_template('employee-details.html', mess=mess)
 
 @app.route('/customers', methods=['GET', 'POST'])
+@login_required
+@employee_check
 def customers():
     cus_form = CustomerForm()
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -207,6 +229,95 @@ def customers():
         
     else:
         return render_template('customers.html', cus_form=cus_form, data=data)
+
+
+@app.route('/collect')
+def collect():
+
+    return render_template('collect.html')
+
+
+#pass customer_details ug value sa row nga gi tuslok sa employee which is id sa customer
+# @app.route('/customer/<cus_id>')
+# def customer_details(cus_id):
+@app.route('/customers/<cus_id>', methods=['GET', 'POST'])
+def customer_details(cus_id):
+    cus_form = CustomerForm()
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute(f'''
+        SELECT c.cusID, c.Lname, c.Fname, c.Mname, c.contact_num, c.address, c.loan_amount, c.gender, c.email, c.loan_made, c.dob, cm.Lname AS "c_Lname", cm.Fname AS "c_Fname", cm.Mname AS "c_Mname", cm.contact_num AS "c_contact_num", cm.address AS "c_address", pm.mode_ID, r.rateID
+        FROM customer AS c
+        INNER JOIN co_maker AS cm
+            ON '{cus_id}' = cm.cusID
+        INNER JOIN payment_mode AS pm
+            ON c.mode_ID = pm.mode_ID
+        INNER JOIN rates AS r
+            ON c.rateID = r.rateID
+        ''')
+    cus_data = cursor.fetchone()
+    
+    if not cus_data:
+        flash(f'User "{cus_id}" doesn\'t exist!', 'danger')
+        
+
+    if request.method == 'POST':
+        Fname = cus_form.Fname.data
+        Mname = cus_form.Mname.data
+        Lname = cus_form.Lname.data
+        email = cus_form.email.data
+        gender = cus_form.gender.data
+        contact_num = cus_form.contact_num.data
+        dob = cus_form.dateofbirth.data
+        address = cus_form.address.data
+        amount = cus_form.amount.data
+        mode = cus_form.mode.data
+        rate = cus_form.rate.data
+        c_Fname = cus_form.c_Fname.data
+        c_Mname = cus_form.c_Mname.data
+        c_Lname = cus_form.c_Lname.data
+        c_contact_num = cus_form.c_contact_num.data
+        c_address = cus_form.c_address.data
+        # contract = cus_form.contract.data
+
+        cursor.execute(f"""
+            UPDATE customer
+            SET 
+                Fname = '{Fname}',
+                Mname = '{Mname}',
+                Lname = '{Lname}',
+                contact_num = '{contact_num}',
+                address = '{address}',
+                loan_amount = {amount},
+                mode_id = {mode},
+                rateid = {rate},
+                gender = '{gender}',
+                email = '{email}',
+                dob = '{dob}'
+            WHERE
+                cusID = '{cus_id}';
+            """)
+        cursor.execute(f"""
+            UPDATE co_maker
+            SET 
+                Fname = '{c_Fname}',
+                Mname = '{c_Mname}',
+                Lname = '{c_Lname}',
+                contact_num = '{c_contact_num}',
+                address = '{c_address}'
+            WHERE
+                cusID = '{cus_id}';
+            """)
+        mysql.connection.commit()
+
+        flash(f'Customer #{cus_id} updated!', 'success')
+        return render_template('customer-details.html', cus_form=cus_form, cus_data=cus_data)
+        #return jsonify(status='ok')
+        
+    else:
+        return render_template('customer-details.html', cus_form=cus_form, cus_data=cus_data)
+
+    
+
 
 
 
