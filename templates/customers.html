@@ -44,13 +44,20 @@
             {% for item in data %}
             <tr>
                 <td class="cus-name">{{item.c_name}}</td>
-                <td class="amount">₱{{item.loan_amount}}</td>
+                <td class="amount" id="amount">₱{{item.loan_amount}}</td>
                 <td class="cus-contact">{{item.contact_num}}</td>
-                <td class="contract">{{item.c_name}}</td>
+                <td class="contract">
+                    {% if item.contract %}
+                        <a href="{{url_for('static', filename='contract/' + item.contract)}}" target="_blank">
+                            View contract
+                        </a>
+                    {% else %}
+                        No contract
+                    {% endif %}
+                </td>
                 <td class="actions">
                     <div class="action">
                         <button id="update-btn" class="update-btn-s" onclick="location.href='/customers/{{item.cusID}}';">Update</button>
-                        <button id="delete-btn" class="delete-btn-s">Delete</button>
                     </div>
                 </td>
             </tr>
@@ -172,7 +179,7 @@
                             </div>
                             <div class="form-group-s">
                                 {{ cus_form.contract.label() }}
-                                {{ cus_form.contract() }}
+                                {{ cus_form.contract(accept="image/jpeg, image/png, application/pdf") }}
                             </div>
                         </div>
 

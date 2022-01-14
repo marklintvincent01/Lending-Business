@@ -1,10 +1,11 @@
+import datetime
+import os, secrets
 import functools
-from flask import Flask, render_template, request, redirect, session, url_for, flash
-from forms import RegistrationForm, LoginForm, CustomerForm
+from flask import Flask, render_template, request, redirect, session, url_for, flash, current_app
+from forms import RegistrationForm, LoginForm, CustomerForm, LoanStatus
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import string
-from random import choice
 from datetime import date
 from passlib.hash import sha256_crypt
 
@@ -43,10 +44,29 @@ def employee_check(view):
         return view(**kwargs)
     return wrapped_view2
 
-@app.route('/')
-@app.route('/home')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/home', methods=['GET', 'POST'])
 def landingpage():
-    return render_template('landingpage.html')
+    loan_stat = LoanStatus()
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    # if request.method == 'POST':
+
+        # cursor.execute(f'''
+        #     SELECT ls.*, CONCAT(c.Lname, ", ", c.Fname, " ", c.Mname) AS "c_name", c.contact_num, c.address, c.loan_amount, c.gender, c.email, c.dob, pm.payment_Mode, r.rate_package, r.interest, CONCAT(le.Lname, ", ", le.Fname, " ", le.Mname) AS "le_name", le.contact_num
+        #     FROM loan_status AS ls 
+        #     INNER JOIN customer AS c
+        #         ON {loan_stat.cus_id.data} = c.cusID
+        #     INNER JOIN payment_mode AS pm
+        #         ON c.mode_ID = pm.mode_ID
+        #     INNER JOIN rates AS r
+        #         ON c.rateID = r.rateID
+        #     INNER JOIN lender_employee AS le
+        #         ON {loan_stat.emp_id.data} = le.lenderID
+        #     WHERE ls.cusID = {loan_stat.cus_id.data} AND le.lenderID = {loan_stat.emp_id.data}
+        #     ''')
+        # ls_data = cursor.fetchone()
+    # return render_template('landingpage.html', loan_stat=loan_stat, ls_data=ls_data)
+    return render_template('landingpage.html', loan_stat=loan_stat)
 
 @app.route('/about')
 def aboutpage():
@@ -57,18 +77,16 @@ def loginpage():
     login_form = LoginForm()
 
     if request.method == 'POST':
-        username = login_form.Lusername.data
-        password = login_form.Lpassword.data
         try:
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-            cursor.execute('SELECT * FROM lender_employee WHERE username = %s', (username,))
+            cursor.execute('SELECT * FROM lender_employee WHERE username = %s', (login_form.Lusername.data,))
             account = cursor.fetchone()
             lender_id = account.get("lenderID")
             cursor.execute('SELECT role_id FROM user_role WHERE lenderID = %s', (lender_id,))
             user_role = cursor.fetchone()
             roleid = user_role.get("role_id")
             lpass_hashed = account.get("lender_password")
-            verify = sha256_crypt.verify(password, lpass_hashed)
+            verify = sha256_crypt.verify(login_form.Lpassword.data, lpass_hashed)
         except:
             flash("The username you entered isn't connected to an account.")
             return redirect(url_for('loginpage'))
@@ -76,7 +94,7 @@ def loginpage():
         if verify:
             session['loggedin'] = True
             session['id'] = lender_id
-            session['username'] = username
+            session['username'] = login_form.Lusername.data
             session['roleid'] = roleid
 
             if roleid == 1:  
@@ -119,59 +137,91 @@ def register():
     data = cursor.fetchall()
     status = 1
     if request.method == 'POST':
-        Fname = register_form.Fname.data
-        Mname = register_form.Mname.data
-        Lname = register_form.Lname.data
-        age = register_form.age.data
-        contact_num = register_form.contact_num.data
-        address = register_form.address.data
-        username = register_form.username.data
-        password = register_form.password.data
-        email = register_form.email.data
         date_hired = date.today()
-        dob = register_form.dateofbirth.data
-        gender = register_form.gender.data
-        role = register_form.role.data
         id = IDGeneratorCheck('employee')
-        hashed_password = sha256_crypt.hash(password)
-        cursor.execute('SELECT * FROM lender_employee WHERE username = %s', (username,))
+        hashed_password = sha256_crypt.hash(register_form.password.data)
+        cursor.execute('SELECT * FROM lender_employee WHERE username = %s', (register_form.username.data,))
         account = cursor.fetchone()
 
         if account:
-            #raise ValidationError("Account already exists!")
-            #msg = 'Account already exists!'
-            #flash('Account already exists!')
-            # errors ={'Error':'Account already exists.'}
-            # data = json.dumps(errors)
-            # return jsonify(data)
-            status = 2
-            
+            status = 404
+        
         else:
             cursor.execute(f"""
                 INSERT INTO lender_employee VALUES
-                ('{id}', '{Fname}', '{Mname}', '{Lname}', '{username}', '{hashed_password}', {age}, '{email}', '{date_hired}', '{dob}', '{contact_num}', '{address}', '{gender}');
+                ('{id}', '{register_form.Fname.data}', '{register_form.Mname.data}', '{register_form.Lname.data}', '{register_form.username.data}', '{hashed_password}', {register_form.age.data}, '{register_form.email.data}', '{date_hired}', '{register_form.dateofbirth.data}', '{register_form.contact_num.data}', '{register_form.address.data}', '{register_form.gender.data}');
             """)
             cursor.execute(f"""
                 INSERT INTO user_role VALUES
-                ({role}, '{id}');
+                ({register_form.role.data}, '{id}');
             """)
             mysql.connection.commit()
 
-        if status == 2:
+        if status == 404:
             flash(f'Username "{register_form.username.data}" already exists!', 'danger')
         else:
             flash(f'Account created for {register_form.username.data}!', 'success')
-        #return jsonify(status='ok')
+
         return redirect(url_for('register'))
         
     else:
         return render_template('employees.html', register_form=register_form, data=data)
 
-@app.route('/employees/<emp_id>')
+@app.route('/employees/<emp_id>', methods=['GET', 'POST'])
+@login_required
+@admin_check
 def employee_details(emp_id):
-    mess = emp_id
+    register_form = RegistrationForm()
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
-    return render_template('employee-details.html', mess=mess)
+    cursor.execute(f'''
+        SELECT le.lenderID, le.Lname, le.Fname, le.Mname, le.age, le.email, le.date_hired, le.dob, le.contact_num, le.address, le.gender, r.role_id, r.role_name
+        FROM lender_employee AS le 
+        INNER JOIN user_role AS ur
+            ON le.lenderID = ur.lenderID
+        INNER JOIN roles AS r
+            ON ur.role_id = r.role_id
+        WHERE le.lenderID = '{emp_id}'
+        ''')
+    emp_data = cursor.fetchone()
+
+    if not emp_data:
+        flash(f'User "{emp_id}" doesn\'t exist!', 'danger')
+    
+    if request.method == 'POST':    
+        role = request.form.get('role', False)
+        
+
+        cursor.execute(f"""
+            UPDATE lender_employee
+            SET 
+                Fname = '{register_form.Fname.data}',
+                Mname = '{register_form.Fname.data}',
+                Lname = '{register_form.Lname.data}',
+                age = {register_form.age.data},
+                email = '{register_form.email.data}',
+                dob = '{register_form.dateofbirth.data}',
+                contact_num = '{register_form.contact_num.data}',
+                address = '{register_form.address.data}',
+                gender = '{register_form.gender.data}'
+            WHERE
+                lenderID = '{emp_id}'; 
+            """)
+        cursor.execute(f"""
+            UPDATE user_role
+            SET 
+                role_id = '{role}'
+            WHERE
+                lenderID = '{emp_id}';
+            """)
+
+        mysql.connection.commit()
+
+    
+        flash(f'Employee  #"{emp_id}" updated!', 'success')
+        return redirect(url_for('register'))
+    else:
+        return render_template('employee-details.html', register_form=register_form, emp_data=emp_data)
 
 @app.route('/customers', methods=['GET', 'POST'])
 @login_required
@@ -180,7 +230,7 @@ def customers():
     cus_form = CustomerForm()
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('''
-        SELECT c.cusID, CONCAT(c.Lname, ", ", c.Fname, " ", c.Mname) AS "c_name", c.contact_num, c.address, c.loan_amount, c.gender, c.email, c.loan_made, c.dob, CONCAT(cm.Lname, ", ", cm.Fname, " ", cm.Lname) AS "cm_name", cm.contact_num AS "c_contact_num", cm.address AS "c_address", pm.payment_Mode, r.rate_package
+        SELECT c.cusID, CONCAT(c.Lname, ", ", c.Fname, " ", c.Mname) AS "c_name", c.contact_num, c.address, c.loan_amount, c.gender, c.email, c.loan_made, c.dob, CONCAT(cm.Lname, ", ", cm.Fname, " ", cm.Lname) AS "cm_name", cm.contact_num AS "c_contact_num", cm.address AS "c_address", pm.payment_Mode, r.rate_package, cl.contract
         FROM customer AS c
         INNER JOIN co_maker AS cm
             ON c.cusID = cm.cusID
@@ -188,38 +238,39 @@ def customers():
             ON c.mode_ID = pm.mode_ID
         INNER JOIN rates AS r
             ON c.rateID = r.rateID
+        INNER JOIN collateral AS cl
+            ON c.cusID = cl.cusID
         ORDER BY c_name ASC
         ''')
     data = cursor.fetchall()
     
     if request.method == 'POST':
         id = IDGeneratorCheck('customer')
-        Fname = cus_form.Fname.data
-        Mname = cus_form.Mname.data
-        Lname = cus_form.Lname.data
-        email = cus_form.email.data
-        gender = cus_form.gender.data
-        contact_num = cus_form.contact_num.data
-        dob = cus_form.dateofbirth.data
-        address = cus_form.address.data
-        amount = cus_form.amount.data
-        mode = cus_form.mode.data
-        rate = cus_form.rate.data
+        emp_id = session.get('id')
         loan_made = date.today()
-        c_Fname = cus_form.c_Fname.data
-        c_Mname = cus_form.c_Mname.data
-        c_Lname = cus_form.c_Lname.data
-        c_contact_num = cus_form.c_contact_num.data
-        c_address = cus_form.c_address.data
-        # contract = cus_form.contract.data
+        created = datetime.datetime.now() + datetime.timedelta(days=2*365)
+        deadline = created.date()
+        collected = 'collected'
+        incomplete = 'incomplete'
 
         cursor.execute(f"""
             INSERT INTO customer VALUES
-            ('{id}', '{Fname}', '{Mname}', '{Lname}', '{contact_num}', '{address}', {amount}, {mode}, {rate}, '{gender}', '{email}', '{loan_made}', '{dob}');
+            ('{id}', '{cus_form.Fname.data}', '{cus_form.Mname.data}', '{cus_form.Lname.data}', '{cus_form.contact_num.data}', '{cus_form.address.data}', {cus_form.amount.data}, {cus_form.mode.data}, {cus_form.rate.data}, '{cus_form.gender.data}', '{cus_form.email.data}', '{loan_made}', '{cus_form.dateofbirth.data}');
         """)
         cursor.execute(f"""
             INSERT INTO co_maker VALUES
-            ('{id}', '{c_Fname}', '{c_Mname}', '{c_Lname}', '{c_contact_num}', '{c_address}');
+            ('{id}', '{cus_form.c_Fname.data}', '{cus_form.c_Mname.data}', '{cus_form.c_Lname.data}', '{cus_form.c_contact_num.data}', '{cus_form.c_address.data}');
+            """)
+        cursor.execute(f"""
+            INSERT INTO loan_status VALUES
+            ('{id}', '{emp_id}', {cus_form.amount.data}, '{loan_made}', '{deadline}', '{collected}', '{incomplete}');
+            """)
+        
+        if cus_form.contract.data:
+            contract_name = saveAvatar(cus_form.contract.data)
+            cursor.execute(f"""
+            INSERT INTO collateral VALUES
+            ('{id}', '{contract_name}');
             """)
         mysql.connection.commit()
 
@@ -232,15 +283,16 @@ def customers():
 
 
 @app.route('/collect')
+@login_required
+@employee_check
 def collect():
 
     return render_template('collect.html')
 
 
-#pass customer_details ug value sa row nga gi tuslok sa employee which is id sa customer
-# @app.route('/customer/<cus_id>')
-# def customer_details(cus_id):
 @app.route('/customers/<cus_id>', methods=['GET', 'POST'])
+@login_required
+@employee_check
 def customer_details(cus_id):
     cus_form = CustomerForm()
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -248,84 +300,113 @@ def customer_details(cus_id):
         SELECT c.cusID, c.Lname, c.Fname, c.Mname, c.contact_num, c.address, c.loan_amount, c.gender, c.email, c.loan_made, c.dob, cm.Lname AS "c_Lname", cm.Fname AS "c_Fname", cm.Mname AS "c_Mname", cm.contact_num AS "c_contact_num", cm.address AS "c_address", pm.mode_ID, r.rateID
         FROM customer AS c
         INNER JOIN co_maker AS cm
-            ON '{cus_id}' = cm.cusID
+            ON c.cusID = cm.cusID
         INNER JOIN payment_mode AS pm
             ON c.mode_ID = pm.mode_ID
         INNER JOIN rates AS r
             ON c.rateID = r.rateID
+        WHERE c.cusID = '{cus_id}'
         ''')
     cus_data = cursor.fetchone()
-    
+
     if not cus_data:
         flash(f'User "{cus_id}" doesn\'t exist!', 'danger')
-        
 
     if request.method == 'POST':
-        Fname = cus_form.Fname.data
-        Mname = cus_form.Mname.data
-        Lname = cus_form.Lname.data
-        email = cus_form.email.data
-        gender = cus_form.gender.data
-        contact_num = cus_form.contact_num.data
-        dob = cus_form.dateofbirth.data
-        address = cus_form.address.data
-        amount = cus_form.amount.data
-        mode = cus_form.mode.data
-        rate = cus_form.rate.data
-        c_Fname = cus_form.c_Fname.data
-        c_Mname = cus_form.c_Mname.data
-        c_Lname = cus_form.c_Lname.data
-        c_contact_num = cus_form.c_contact_num.data
-        c_address = cus_form.c_address.data
-        # contract = cus_form.contract.data
+        rate = request.form.get('rate', False)
 
         cursor.execute(f"""
             UPDATE customer
             SET 
-                Fname = '{Fname}',
-                Mname = '{Mname}',
-                Lname = '{Lname}',
-                contact_num = '{contact_num}',
-                address = '{address}',
-                loan_amount = {amount},
-                mode_id = {mode},
+                Fname = '{cus_form.Fname.data}',
+                Mname = '{cus_form.Mname.data}',
+                Lname = '{cus_form.Lname.data}',
+                contact_num = '{cus_form.contact_num.data}',
+                address = '{cus_form.address.data}',
+                loan_amount = {cus_form.amount.data},
+                mode_id = {cus_form.mode.data},
                 rateid = {rate},
-                gender = '{gender}',
-                email = '{email}',
-                dob = '{dob}'
+                gender = '{cus_form.gender.data}',
+                email = '{cus_form.email.data}',
+                dob = '{cus_form.dateofbirth.data}'
             WHERE
-                cusID = '{cus_id}';
+                cusID = '{cus_id}'; 
             """)
         cursor.execute(f"""
             UPDATE co_maker
             SET 
-                Fname = '{c_Fname}',
-                Mname = '{c_Mname}',
-                Lname = '{c_Lname}',
-                contact_num = '{c_contact_num}',
-                address = '{c_address}'
+                Fname = '{cus_form.c_Fname.data}',
+                Mname = '{cus_form.c_Mname.data}',
+                Lname = '{cus_form.c_Lname.data}',
+                contact_num = '{cus_form.c_contact_num.data}',
+                address = '{cus_form.c_address.data}'
             WHERE
                 cusID = '{cus_id}';
             """)
+        if cus_form.contract.data:
+            contractdata = saveAvatar(cus_form.contract.data)
+            sendAvatar(cus_id, contractdata)
+
         mysql.connection.commit()
 
         flash(f'Customer #{cus_id} updated!', 'success')
-        return render_template('customer-details.html', cus_form=cus_form, cus_data=cus_data)
+        return redirect(url_for('customers'))
         #return jsonify(status='ok')
         
     else:
         return render_template('customer-details.html', cus_form=cus_form, cus_data=cus_data)
 
+@app.route('/customer/delete/<cus_id>')
+@login_required
+@employee_check
+def cus_delete(cus_id):
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('DELETE FROM customer WHERE cusID =  %s', (cus_id,))
+    mysql.connection.commit()
+    flash(f'Customer #{cus_id} deleted!', 'success')
+    return redirect(url_for('customers'))
+
+@app.route('/employee/delete/<emp_id>')
+@login_required
+@admin_check
+def emp_delete(emp_id):
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('DELETE FROM lender_employee WHERE lenderID =  %s', (emp_id,))
+    mysql.connection.commit()
+    flash(f'Employee #{emp_id} deleted!', 'success')
+    return redirect(url_for('customers'))
+
+# locally save avatar
+def saveAvatar(userAvatar):
     
+    # configure filename and path
+    randName = secrets.token_hex(16)
+    _, fileExt = os.path.splitext(userAvatar.filename)
+    newFileName = randName + fileExt
+    newFilePath = os.path.join(current_app.root_path, 'static', 'contract', newFileName)
 
+    # save avatar in static/avatars
+    userAvatar.save(newFilePath)
+    
+    return newFileName
 
+# update user avatar in database    
+def sendAvatar(userID, fileName):
+        cur = mysql.connection.cursor()
+        
+        cur.execute(f'''
+                    UPDATE collateral
+                    SET contract = '{fileName}'
+                    WHERE cusID ='{userID}'
+                    ''')
+        mysql.connection.commit()
 
 
 def IDGenerator():
-    chars = string.digits
-    random =  ''.join(choice(chars) for _ in range(4))
+    chars = string.digits + string.ascii_uppercase
+    genstring = ''.join(secrets.choice(chars) for i in range(4))
 
-    return random
+    return genstring
 
 def IDGeneratorCheck(table):
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -348,3 +429,9 @@ def IDGeneratorCheck(table):
 
 if __name__ == '__main__':
     app.run(debug = True)
+
+
+#possible magamit system for change username and password
+# if status == 404:
+#     flash(f'Username "{register_form.username.data}" already exists!', 'danger')
+# else:

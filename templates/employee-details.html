@@ -8,5 +8,101 @@
     </div> -->
 {% endblock nav_items %}
 {% block content %}
-    {{ mess }}
+    <header class="content-header">
+        <div class="alert-container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            <p>{{ message }}</p>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+    </header>
+
+    <main class="content-main">
+        <div class="box">
+
+            <div class="box-card">
+    
+                <div class="modal-header">
+                    <p>Employee #{{emp_data.lenderID}}</p>
+                </div>
+                
+                <div class="modal-body">
+                    <form id='updateEmployee' action="" method="POST" enctype="multipart/form-data">
+                        {{ register_form.hidden_tag() }}
+                        <div class="modal-content-divider">
+                            <h4>Employee Information</h4>
+    
+                            <div class="form-group-row">
+                                <div class="form-group-s">
+                                    {{ register_form.Fname.label() }}
+                                    {{ register_form.Fname(value=emp_data.Fname) }}
+                                </div>
+                                <div class="form-group-s">
+                                    {{ register_form.age.label() }}
+                                    {{ register_form.age(value=emp_data.age) }}
+                                </div>
+                            </div>
+    
+                            <div class="form-group-row">
+                                <div class="form-group-s">
+                                    {{ register_form.Mname.label() }}
+                                    {{ register_form.Mname(value=emp_data.Mname) }}
+                                </div>
+                                <div class="form-group-s">
+                                    {{ register_form.Lname.label() }}
+                                    {{ register_form.Lname(value=emp_data.Lname) }}
+                                </div>
+                            </div>
+    
+                            <div class="form-group-row">
+                                <div class="form-group-xs">
+                                    {{ register_form.dateofbirth.label() }}
+                                    {{ register_form.dateofbirth(value=emp_data.dob) }}
+                                </div>
+                                <div class="form-group-xs">
+                                    {{ register_form.role.label() }}
+                                    <select name="role" id="role" class="select-margin">
+                                        <option value="{{emp_data.role_id}}" selected>{{emp_data.role_name}} (current)</option>
+                                        <option value="1">Admin</option>
+                                        <option value="2">Employee</option>
+                                    </select>
+                                </div>
+                                <div class="form-group-xs">
+                                    {{ register_form.gender.label() }}
+                                    {{ register_form.gender(value=emp_data.gender) }}
+                                </div>
+                            </div>
+    
+                            <div class="form-group">
+                                {{ register_form.address.label() }}
+                                {{ register_form.address(value=emp_data.address) }}
+                            </div>
+    
+                            <div class="form-group-row">
+                                <div class="form-group-s">
+                                    {{ register_form.email.label() }}
+                                    {{ register_form.email(value=emp_data.email) }}
+                                </div>
+                                <div class="form-group-s">
+                                    {{ register_form.contact_num.label() }}
+                                    {{ register_form.contact_num(value=emp_data.contact_num) }}
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+    
+                <div class="modal-footer">
+                    
+                    <button type="reset" id="close-modal" class="cus-delete-btn" onclick="location.href='/employee/delete/{{emp_data.lenderID}}';">Remove Employee</button>
+                    {{ register_form.update(form="updateEmployee", class="btn-primary") }}
+                </div>
+            </div>
+        </div>
+    </main>
 {% endblock content %}

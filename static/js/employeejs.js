@@ -15,6 +15,8 @@ var reg_btn = document.getElementById("submit");
 var err_ms = document.getElementById("error-text");
 
 
+
+
 btn.onclick = function() {
     modal.style.display = "block";
     body.style.overflow = "hidden";
@@ -37,80 +39,29 @@ reg_btn.onclick = function() {
     }
 }
 
-// reg_btn.addEventListener("click", function (e) {
-//     e.preventDefault();
-// });
-// $(document).ready(function () {
-//     $('#submit').click(function (event) {
-//         $.post(url, data = $('#registerEmployee').serialize(), function (
-//             data) {
-//             if (!(data.status == 'ok')) {
-//                 event.preventDefault();
-//                 var obj = JSON.parse(data);
-//                 for (var key in obj) {
-//                     if (obj.hasOwnProperty(key)) {
-//                         var value = obj[key];
-//                     }
-//                 }
-//                 $('.help-block').remove()
-//                 $('<p class="help-block">' + value + '</p>')
-//                     .insertAfter('#' + key);
-//             }
-//         })
-//     });
-// })
+// holder = document.getElementById("amount");
+// amount = holder.value
+// holder.innerHTML = amount.toLocaleString(); 
 
-//sulayanan pa ni
-// (function() {
-//     "use strict";
- 
-//     window.addEventListener("load", function() {
-//       document.getElementById("registerEmployee").addEventListener("submit", function(event) {
-//         event.target.checkValidity();
-//         event.preventDefault(); // Prevent form submission and contact with server
-//         event.stopPropagation();
-//       }, false);
-//     }, false);
-//   }());
-
-// $(function(event) {
-//     var x = "alert-danger";
-//     var y = $("#alert-mess").hasClass(x);
-//     if (y) {
-//         event.preventDefault();
-//         event.stopImmediatePropagation();
-        
-//     }
-//     else {
-//         return true;
-//     }
-// });
-
-// function updateTextView(_obj){
-//     var num = getNumber(_obj.val());
-//     if(num==0){
-//         _obj.val('');
-//     }else{
-//         _obj.val(num.toLocaleString());
-//     }
-// }
-// function getNumber(_str){
-//     var arr = _str.split('');
-//     var out = new Array();
-//     for(var cnt=0;cnt<arr.length;cnt++){
-//         if(isNaN(arr[cnt])==false){
-//         out.push(arr[cnt]);
-//         }
-//     }
-//     return Number(out.join(''));
-// }
-// $(document).ready(function(){
-//     $('#amount').on('keyup',function(){
-//         updateTextView($(this));
-//     });
-// });
 
 $(function() {
     setTimeout(function() { $(".alert").fadeOut(1500); }, 5000)
 })
+
+$(function(){
+    var dtToday = new Date();
+
+    var month = dtToday.getMonth() + 1;
+    var day = dtToday.getDay();
+    var year = dtToday.getFullYear();
+
+    if(month < 10)
+        month = '0' + month.toString();
+    if(day < 10)
+        day = '0' + day.toString();
+    
+    var maxDate = year + '-' + month + '-' + day;
+    $('#dateofbirth').attr('max', maxDate);
+});
+
 

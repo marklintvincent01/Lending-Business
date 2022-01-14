@@ -343,6 +343,14 @@ input[type="file"] {
     font-weight: 500;
     padding: 10.5px 1rem;
 }
+input[type="date" i] {
+    align-items: center;
+    display: -webkit-inline-flex;
+    padding: 10.5px 1rem;
+    cursor: default;
+    overflow: hidden;
+    width: 100%;
+}
 
 input.fixed-right {
     border: 1px solid rgba(0, 0, 0, 0.2);

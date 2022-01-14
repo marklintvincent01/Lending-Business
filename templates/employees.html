@@ -52,7 +52,6 @@
                 <td class="actions">
                     <div class="action">
                         <button id="update-btn" class="update-btn-s" onclick="location.href='/employees/{{item.lenderID}}';">Update</button>
-						<button id="delete-btn" class="delete-btn-s">Delete</button>
                     </div>
                 </td>
             </tr>
@@ -70,9 +69,9 @@
                 <p>Add Employee</p>
             </div>
             
-            <!-- Modal body -->
+            <!-- Modal body  onsubmit="submit.disabled = true; return true;"-->
             <div class="modal-body">
-                <form id='registerEmployee' action="" method="POST" enctype="multipart/form-data" onsubmit="submit.disabled = true; return true;">
+                <form id='registerEmployee' action="" method="POST" enctype="multipart/form-data">
                     {{ register_form.hidden_tag() }}
                     <div class="modal-content-divider">
                         <h4>Employee Information</h4>
@@ -101,7 +100,6 @@
                             </div>
                         </div>
 
-                        <!-- DOB and gender forms -->
                         <div class="form-group-row">
                             <div class="form-group-xs">
                                 {{ register_form.dateofbirth.label() }}
@@ -117,13 +115,11 @@
                             </div>
                         </div>
 
-                        <!-- Address form -->
                         <div class="form-group">
                             {{ register_form.address.label() }}
                             {{ register_form.address() }}
                         </div>
 
-                        <!-- Civil stat, nationality, contact num forms -->
                         <div class="form-group-row">
                             <div class="form-group-s">
                                 {{ register_form.email.label() }}
@@ -141,7 +137,6 @@
                     <div class="modal-content-divider">
                         <h4>Employee Account Username and Password</h4>
 
-                        <!-- Job title, company forms -->
                         <div class="form-group">
                             {{ register_form.username.label() }}
                             {{ register_form.username() }}
@@ -154,56 +149,24 @@
                                 {% endfor %}
                             {% endif %}
                             {% endwith %}
-                            <!-- {% with messages = get_flashed_messages() %}
-                            {% if messages %}
-                                {% for message in messages %}
-                                    <div class="invalid-feedback">
-                                        {{ message }}
-                                    </div>
-                                {% endfor %}
-                            {% endif %}
-                            {% endwith %} -->
                         </div>
 
-                        <!-- Comp address form -->
                         <div class="form-group">
                             {{ register_form.password.label() }}
                             {{ register_form.password() }}
-                            <!-- {% if register_form.password.errors %}
-                                {{ register_form.password(class="is-invalid") }}
-                                <div class="invalid-feedback">
-                                    {% for error in register_form.password.errors %}
-                                        <span>{{ error }}</span>
-                                    {% endfor %}
-                                </div>
-                            {% else %}
-                                {{ register_form.password() }}
-                            {% endif %} -->
                         </div>
 
-                        <!-- Employment yr, annual salary forms -->
                         <div class="form-group">
                             {{ register_form.confirm_password.label() }}
                             {{ register_form.confirm_password() }}
                             <p id="error-text" class="invalid-feedback">Password not the same.</p>
-                            <!-- {% if register_form.confirm_password.errors %}
-                                {{ register_form.confirm_password(class="is-invalid") }}
-                                <div class="invalid-feedback">
-                                    {% for error in register_form.confirm_password.errors %}
-                                        <span>{{ error }}</span>
-                                    {% endfor %}
-                                </div>
-                            {% else %}
-                                {{ register_form.confirm_password() }}
-                            {% endif %} -->
                         </div>
                     </div>
                 </form>
             </div>
 
-            <!-- Modal footer -->
             <div class="modal-footer">
-                <!-- Modal action buttons -->
+
                 <button type="reset" id="close-modal" class="btn-secondary" form="">Cancel</button>
                 {{ register_form.submit(form="registerEmployee", class="btn-primary") }}
             </div>

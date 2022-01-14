@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileAllowed
+from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import StringField, DateField, IntegerField, SelectField
 from wtforms.fields.simple import PasswordField, SubmitField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, InputRequired
@@ -19,6 +19,7 @@ class RegistrationForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired(), Length(min=10, max=255)])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), Length(min=10, max=255), EqualTo('password')])
     submit = SubmitField('Register')
+    update = SubmitField('Update')
 
 class LoginForm(FlaskForm):
     Lusername = StringField('Username', validators=[DataRequired(), Length(min=5, max=20)])
@@ -44,3 +45,8 @@ class CustomerForm(FlaskForm):
     c_address = StringField('Address', validators=[DataRequired(), Length(min=1, max=255)])
     contract = FileField('Contract', validators=[FileAllowed(['jpg', 'png', 'pdf'])])
     submit = SubmitField('Register')
+    update = SubmitField('Update')
+
+class LoanStatus(FlaskForm):
+    emp_id = StringField('Lender Employee ID', validators=[DataRequired(), Length(min=1, max=10)])
+    cus_id = StringField('Customer ID', validators=[DataRequired(), Length(min=1, max=10)])

@@ -25,22 +25,19 @@
     <main class="content-main">
         <div class="box">
 
-            <!-- Modal content -->
             <div class="box-card">
 
-                <!-- Modal header -->
                 <div class="modal-header">
                     <p>Customer #{{cus_data.cusID}}</p>
                 </div>
                 
-                <!-- Modal body -->
                 <div class="modal-body">
                     <form id='updateCustomer' action="" method="POST" enctype="multipart/form-data">
                         {{ cus_form.hidden_tag() }}
                         <div class="modal-content-divider">
                             <h4>Customer Information</h4>
 
-                            <!-- First name, avatar forms -->
+                            
                             <div class="form-group-row">
                                 <div class="form-group-s">
                                     {{ cus_form.Fname.label() }}
@@ -52,7 +49,7 @@
                                 </div>
                             </div>
 
-                            <!-- Middle name, last name forms -->
+                            
                             <div class="form-group-row">
                                 <div class="form-group-s">
                                     {{ cus_form.Lname.label() }}
@@ -64,13 +61,13 @@
                                 </div>
                             </div>
 
-                            <!-- Address form -->
+                            
                             <div class="form-group">
                                 {{ cus_form.address.label() }}
                                 {{ cus_form.address(value=cus_data.address) }}
                             </div>
 
-                            <!-- DOB and gender forms -->
+                            
                             <div class="form-group-row">
                                 <div class="form-group-xs">
                                     {{ cus_form.dateofbirth.label() }}
@@ -92,7 +89,7 @@
                         <div class="modal-content-divider">
                             <h4>Comaker Information</h4>
 
-                            <!-- Job title, company forms -->
+                            
                             <div class="form-group-row">
                                 <div class="form-group-s">
                                     {{ cus_form.c_Fname.label() }}
@@ -115,7 +112,7 @@
                                 </div>
                             </div>
 
-                            <!-- Comp address form -->
+                           
                             <div class="form-group">
                                 {{ cus_form.c_address.label() }}
                                 {{ cus_form.c_address(value=cus_data.c_address) }}
@@ -126,7 +123,7 @@
                         <div class="modal-content-divider">
                             <h4>Loan Details</h4>
 
-                            <!-- Job title, company forms -->
+                            
                             <div class="form-group-row">
                                 <div class="form-group-s">
                                     {{ cus_form.amount.label() }}
@@ -137,7 +134,7 @@
                                 </div>
                                 <div class="form-group-s">
                                     {{ cus_form.contract.label() }}
-                                    {{ cus_form.contract() }}
+                                    {{ cus_form.contract(accept="image/jpeg, image/png, application/pdf") }}
                                 </div>
                             </div>
 
@@ -148,7 +145,11 @@
                                 </div>
                                 <div class="form-group-s">
                                     {{ cus_form.rate.label() }}
-                                    {{ cus_form.rate(value=cus_data.rateID) }}
+                                    <select name="rate" id="rate">
+                                        <option value="{{cus_data.rateID}}" selected>{{cus_data.rateID}} (current)</option>
+                                        <option value="1">1 Year</option>
+                                        <option value="2">2 Years</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -158,10 +159,12 @@
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <!-- Modal action buttons -->
-                    <button type="reset" id="close-modal" class="cus-delete-btn" form="">Delete Customer</button>
-                    {{ cus_form.submit(form="updateCustomer", class="btn-primary") }}
+                    <button id="close-modal" class="cus-delete-btn" onclick="location.href='/customer/delete/{{cus_data.cusID}}';">Remove Customer</button>
+                    {{ cus_form.update(form="updateCustomer", class="btn-primary") }}
                 </div>
             </div>
         </div>
     </main>
+
+    <script type="text/javascript" src="{{url_for('static', filename='js/employeejs.js')}}"></script>
 {% endblock content %}
