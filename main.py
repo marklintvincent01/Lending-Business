@@ -49,24 +49,26 @@ def employee_check(view):
 def landingpage():
     loan_stat = LoanStatus()
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    # if request.method == 'POST':
+    if request.method == 'POST':
 
-        # cursor.execute(f'''
-        #     SELECT ls.*, CONCAT(c.Lname, ", ", c.Fname, " ", c.Mname) AS "c_name", c.contact_num, c.address, c.loan_amount, c.gender, c.email, c.dob, pm.payment_Mode, r.rate_package, r.interest, CONCAT(le.Lname, ", ", le.Fname, " ", le.Mname) AS "le_name", le.contact_num
-        #     FROM loan_status AS ls 
-        #     INNER JOIN customer AS c
-        #         ON {loan_stat.cus_id.data} = c.cusID
-        #     INNER JOIN payment_mode AS pm
-        #         ON c.mode_ID = pm.mode_ID
-        #     INNER JOIN rates AS r
-        #         ON c.rateID = r.rateID
-        #     INNER JOIN lender_employee AS le
-        #         ON {loan_stat.emp_id.data} = le.lenderID
-        #     WHERE ls.cusID = {loan_stat.cus_id.data} AND le.lenderID = {loan_stat.emp_id.data}
-        #     ''')
-        # ls_data = cursor.fetchone()
-    # return render_template('landingpage.html', loan_stat=loan_stat, ls_data=ls_data)
-    return render_template('landingpage.html', loan_stat=loan_stat)
+        cursor.execute(f'''
+            SELECT ls.*, CONCAT(c.Lname, ", ", c.Fname, " ", c.Mname) AS "c_name", c.contact_num, c.address, c.loan_amount, c.gender, c.email, c.dob, pm.payment_Mode, r.rate_package, r.interest, CONCAT(le.Lname, ", ", le.Fname, " ", le.Mname) AS "le_name", le.contact_num
+            FROM loan_status AS ls 
+            INNER JOIN customer AS c
+                ON {loan_stat.cus_id.data} = c.cusID
+            INNER JOIN payment_mode AS pm
+                ON c.mode_ID = pm.mode_ID
+            INNER JOIN rates AS r
+                ON c.rateID = r.rateID
+            INNER JOIN lender_employee AS le
+                ON {loan_stat.emp_id.data} = le.lenderID
+            WHERE ls.cusID = {loan_stat.cus_id.data} AND le.lenderID = {loan_stat.emp_id.data}
+            ''')
+        ls_data = cursor.fetchone()
+        return render_template('landingpage.html', loan_stat=loan_stat, ls_data=ls_data)
+    else:
+        return render_template('landingpage.html', loan_stat=loan_stat)
+    # return render_template('landingpage.html', loan_stat=loan_stat)
 
 @app.route('/about')
 def aboutpage():

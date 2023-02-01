@@ -8,6 +8,7 @@ var btn = document.getElementById("add-profile-btn");
 
 // Element that closes the modal
 var cancel = document.getElementById("close-modal");
+
 var form = document.getElementById("registerEmployee")
 var pass = document.getElementById("password");
 var conf_pass = document.getElementById("confirm_password");
